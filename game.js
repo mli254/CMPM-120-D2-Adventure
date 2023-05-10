@@ -1,9 +1,73 @@
-class Demo1 extends AdventureScene {
+class MainRoom extends AdventureScene {
     constructor() {
-        super("demo1", "First Room");
+        super("main", "An aquarium.");
+    }
+
+    preload() {
+        this.load.image('freshwater_bg', './assets/freshwater_exhibit/freshwater_bg.png');
+        this.load.image('freshwater_tanks', './assets/freshwater_exhibit/freshwater_tanks.png');
+        this.load.image('return_freshwater', './assets/freshwater_exhibit/return_door.png');
+        this.load.image('deepsea_door', './assets/freshwater_exhibit/deepsea_door.png');
+        this.load.image('employee_board', './assets/freshwater_exhibit/employee_board.png');
     }
 
     onEnter() {
+
+        let main_bg = this.add.image(0, 0, 'main_bg').setOrigin(0,0);
+        main_bg.setScale(0.75);
+
+        let main_tanks = this.add.image(0, 0, 'main_tanks').setOrigin(0,0)
+            .setInteractive()
+            .on('pointerover', () => this.showMessage("?"))
+            .on('pointerdown', () => {
+                this.showMessage("If this is an aquarium, why are the tanks empty?");
+            });
+        main_tanks.setScale(0.75);
+
+        let freshwater_door = this.add.image(1516*0.75, 446*0.75, 'freshwater_door').setOrigin(0,0)
+            .setInteractive()
+            .on('pointerover', () => this.showMessage("A new room?"))
+            .on('pointerdown', () => {
+                this.showMessage("Moving to the next room.");
+                this.gotoScene('freshwater');
+            });
+        freshwater_door.setScale(0.75);
+        
+        let penguin_door = this.add.image(1296, 334.5, 'penguin_door').setOrigin(0,0)
+            .setInteractive()
+            .on('pointerover', () => {
+                if (this.hasItem("key")) {
+                    this.showMessage("I have the key now.");
+                } else {
+                    this.showMessage("A closed door.");
+                }
+            })
+            .on('pointerdown', () => {
+                if (this.hasItem("key")) {
+                    this.showMessage("The key fits in the lock.");
+                } else {
+                    this.showMessage("It's locked. Maybe I need a key?");
+                    this.tweens.add({
+                        targets: penguin_door,
+                        x: '+=' + this.s,
+                        repeat: 2,
+                        yoyo: true,
+                        ease: 'Sine.inOut',
+                        duration: 100
+                    });
+                }
+            });
+        penguin_door.setScale(0.75);
+
+        let aquarium_hours = this.add.image(1342*0.75, 788*0.75, 'aquarium_hours').setOrigin(0,0)
+            .setInteractive()
+            .on('pointerover', () => this.showMessage("A piece of paper lays on the ground."))
+            .on('pointerdown', () => {
+                this.showFlyer();
+                });
+        aquarium_hours.setScale(0.4);
+        
+        let player = this.add.image(500, 500, 'player').setOrigin(0,0);
 
         let clip = this.add.text(this.w * 0.3, this.w * 0.3, "📎 paperclip")
             .setFontSize(this.s * 2)
@@ -61,11 +125,15 @@ class Demo1 extends AdventureScene {
     }
 }
 
-class Demo2 extends AdventureScene {
+class Freshwater extends AdventureScene {
     constructor() {
-        super("demo2", "The second room has a long name (it truly does).");
+        super("freshwater", "The freshwater exhibit.");
     }
     onEnter() {
+
+        let freshwater_bg = this.add.image(0, 0, 'freshwater_bg').setOrigin(0,0);
+        freshwater_bg.setScale(0.75);
+
         this.add.text(this.w * 0.3, this.w * 0.4, "just go back")
             .setFontSize(this.s * 2)
             .setInteractive()
@@ -73,7 +141,7 @@ class Demo2 extends AdventureScene {
                 this.showMessage("You've got no other choice, really.");
             })
             .on('pointerdown', () => {
-                this.gotoScene('demo1');
+                this.gotoScene('main');
             });
 
         let finish = this.add.text(this.w * 0.6, this.w * 0.2, '(finish the game)')
@@ -92,16 +160,41 @@ class Demo2 extends AdventureScene {
     }
 }
 
+class DeepSea extends AdventureScene {
+    constructor() {
+        super("deepsea", "A very dark room.");
+    }
+}
+
+class Penguin extends AdventureScene {
+    constructor() {
+        super("penguin", "A room in shadow.");
+    }
+}
+
 class Intro extends Phaser.Scene {
     constructor() {
         super('intro')
     }
+
+    preload() {
+        this.load.image('flyer_big', './assets/global/flyer.png');
+        this.load.image('player', './assets/global/player.png');
+        this.load.image('sparkle1', './assets/global/sparkle1.png');
+        this.load.image('sparkle2', './assets/global/sparkle2.png');
+        this.load.image('main_bg', './assets/main_exhibit/aquarium_bg.png');
+        this.load.image('aquarium_hours', './assets/main_exhibit/aquarium_hours.png');
+        this.load.image('freshwater_door', './assets/main_exhibit/freshwater_door.png');
+        this.load.image('penguin_door', './assets/main_exhibit/penguin_door.png');
+        this.load.image('main_tanks', './assets/main_exhibit/tanks.png');
+    }
+
     create() {
         this.add.text(50,50, "Adventure awaits!").setFontSize(50);
         this.add.text(50,100, "Click anywhere to begin.").setFontSize(20);
         this.input.on('pointerdown', () => {
             this.cameras.main.fade(1000, 0,0,0);
-            this.time.delayedCall(1000, () => this.scene.start('demo1'));
+            this.time.delayedCall(1000, () => this.scene.start('main'));
         });
     }
 }
@@ -125,7 +218,7 @@ const game = new Phaser.Game({
         width: 1920,
         height: 1080
     },
-    scene: [Intro, Demo1, Demo2, Outro],
+    scene: [Intro, MainRoom, Freshwater, Outro],
     title: "Adventure Game",
 });
 
