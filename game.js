@@ -247,8 +247,16 @@ class Puzzle extends AdventureScene {
                                 duration: 100
                             });
                             this.cameras.main.fade(this.transitionDuration, 255, 0, 0);
-                            this.gotoScene("outro");
+                            this.gotoScene('badend');
                         }
+                        this.tweens.add({
+                            targets: boxButton1,
+                            x: '+=' + this.s,
+                            repeat: 2,
+                            yoyo: true,
+                            ease: 'Sine.inOut',
+                            duration: 100
+                        });
                         this.showMessage("\"Bzzt! Incorrect!\"");
                         this.showNarration("I don't think I know the answer. I should probably look elsewhere first.");
                     });
@@ -277,8 +285,16 @@ class Puzzle extends AdventureScene {
                                 duration: 100
                             });
                             this.cameras.main.fade(this.transitionDuration, 255, 0, 0);
-                            this.gotoScene("outro");
+                            this.gotoScene('badend');
                         }
+                        this.tweens.add({
+                            targets: boxButton2,
+                            x: '+=' + this.s,
+                            repeat: 2,
+                            yoyo: true,
+                            ease: 'Sine.inOut',
+                            duration: 100
+                        });
                         this.showMessage("\"Bzzt! Incorrect!\"");
                         this.showNarration("I don't think I know the answer. I should probably look elsewhere first.");
                     });
@@ -307,8 +323,16 @@ class Puzzle extends AdventureScene {
                                 duration: 100
                             });
                             this.cameras.main.fade(this.transitionDuration, 255, 0, 0);
-                            this.gotoScene("outro");
+                            this.gotoScene('badend');
                         }
+                        this.tweens.add({
+                            targets: boxButton3,
+                            x: '+=' + this.s,
+                            repeat: 2,
+                            yoyo: true,
+                            ease: 'Sine.inOut',
+                            duration: 100
+                        });
                         this.showMessage("\"Bzzt! Incorrect!\"");
                         this.showNarration("I don't think I know the answer. I should probably look elsewhere first.");
                     });
@@ -325,7 +349,7 @@ class Puzzle extends AdventureScene {
                 if (this.hasItem('feeding notice')) {
                     this.showNarration("I should have the answer now.");
                     let option4 = this.add.container(350, 200);
-                    let boxButton4 = this.add.rectangle(0, 0, 300, 100, 0xffffff)
+                    let boxButton4 = this.add.rectangle(0, 0, 300, 100, 0xd1cbba)
                         .setInteractive()
                         .on('pointerdown', () => {
                             this.showMessage("It opened!");
@@ -372,9 +396,9 @@ class Puzzle extends AdventureScene {
         let back = this.add.text(this.w * 0.6, this.h * 0.75, "Step Back")
             .setFontSize(this.s * 2)
             .setInteractive()
-            .on('pointerover', () => this.showMessage("Step back from board?"))
+            .on('pointerover', () => this.showMessage("Let's look around the room some more."))
             .on('pointerdown', () => {
-                this.showNarration("Let's move back.");
+                this.showNarration("Stepping away from the board--");
                 this.gotoScene('freshwater');
             });
     }
@@ -412,9 +436,10 @@ class DeepSea extends AdventureScene {
             .setInteractive()
             .on('pointerover', () => this.showMessage("There's a piece of paper on the ground close to where I'm standing."))
             .on('pointerdown', () => {
-                this.showFlyer("Aquarium Closure", "We regret to inform our loyal visitors that, as of ##/##/##, the aquarium will be permanently closed. There have been various reports, by both visitors and staff, of strange noises in the hallways, as well as unexplainable stains on the floors.\n The recent disappearance of one of our employees forced our hands. As the aquarium currently presents a clear danger to those that visit it, we had no other choice but to cease operations. We apologize greatly for this news.");
-                });
-                this.showNarration("A disappearance? The name written here isn't mine, but...");
+                this.showFlyer("Aquarium Closure", "We regret to inform our loyal visitors that, as of ##/##/##, the aquarium will be permanently closed. There have been various reports, by both visitors and staff, of strange noises in the hallways, as well as unexplainable stains on the floors.\n\nThe recent disappearance of one of our employees forced our hands. As the aquarium currently presents a clear danger to those that visit it, we had no other choice but to cease operations. We apologize greatly for this news.");
+                this.showNarration("A disappearance? I don't remember working here, but...");
+            });
+                
         aquarium_closure.setScale(0.4);
 
         if (this.hasItem('feeding notice')) {
@@ -472,9 +497,9 @@ class Penguin extends AdventureScene {
 
         let return_main2 = this.add.image(96*0.75, 172.8*0.75, 'return_main2').setOrigin(0,0)
             .setInteractive()
-            .on('pointerover', () => this.showMessage("Goes back to the room with the big tanks."))
+            .on('pointerover', () => this.showMessage("That's the way I came from. Should I really go back?"))
             .on('pointerdown', () => {
-                this.showMessage("Moving back to previous room.");
+                this.showNarration("I can't stay here.");
                 this.gotoScene('main');
             });
         return_main2.setScale(0.75);
@@ -483,7 +508,7 @@ class Penguin extends AdventureScene {
             .setInteractive()
             .on('pointerover', () => this.showMessage("A knife!"))
             .on('pointerdown', () => {
-                this.showMessage("The handle is slimy with something... it's too slippery to hold.");
+                this.showNarration("The handle is slimy with something... it's too slippery to hold.");
                 this.tweens.add({
                     targets: knife,
                     x: '+=' + this.s,
@@ -495,7 +520,7 @@ class Penguin extends AdventureScene {
             });
         knife.setScale(0.4)
         
-        const shadow = this.add.sprite(1363.2, 433.4, 'shadow');
+        const shadow = this.add.sprite(1363.2, 433.4, 'shadow').setInteractive();
         this.anims.create({
             key: 'shadow',
             frames: this.anims.generateFrameNumbers('shadow', { start: 0, end: 1 }),
@@ -503,6 +528,13 @@ class Penguin extends AdventureScene {
             repeat: -1
         })
         shadow.anims.play('shadow', true);
+
+        shadow.on('pointerup', () =>
+        {
+            this.showMessage("What's that?!");
+            this.gotoScene('outro');
+
+        });
     }
 }
 
@@ -555,6 +587,7 @@ class Intro extends Phaser.Scene {
             .setWordWrapWidth(1900);
 
         this.typewriteTextWrapped('When I woke up, I was in a place I didn\'t recognize.');
+        
         this.time.delayedCall(4000, () => {
             let info = this.add.text(100,300, "Click anywhere to begin.").setFontSize(30)
             .setAlpha(0);
@@ -576,18 +609,102 @@ class Outro extends Phaser.Scene {
     constructor() {
         super('outro');
     }
+
+    typewriteTextWrapped(text)
+        {
+            const lines = this.label.getWrappedText(text)
+            const wrappedText = lines.join('\n')
+    
+            this.typewriteText(wrappedText)
+        }
+
+    typewriteText(text)
+        {
+            const length = text.length
+            let i = 0
+            this.time.addEvent({
+                callback: () => {
+                    this.label.text += text[i]
+                    ++i
+                },
+                repeat: length - 1,
+                delay: 50
+            })
+        }
+
     create() {
-        this.add.text(50, 50, "That's all!").setFontSize(50);
-        this.add.text(50, 100, "Click anywhere to restart.").setFontSize(20);
-        this.input.on('pointerdown', () => this.scene.start('intro'));
+        this.label = this.add.text(100, 100, '')
+            .setFontSize(35)
+            .setWordWrapWidth(1800);
+
+        this.typewriteTextWrapped('When I ran towards the shadow-y shape, hundreds of tiny, beady eyes stared back at me.\n\nI stopped dead in my tracks. The room, lit only from the fire of a cauldron, was surrounded by hundreds and hundreds of penguins. Gentoo, Rockhopper, Galapagos, Humboldt, Macaroni, you name it. Each and every bird turned to look at the intruder in their midst--except for one.\n\nIt was difficult to tell at first, but a penguin in the front was wearing a chef hat. That\'s when I noticed what was in the cauldron.\n\nFish. It was just fish. The aquarium\'s fish, sure, but not like... human meat or something. Under the silent glare of the penguins in the congregation, I quietly walked back through the enclosure door.');
+        this.time.delayedCall(37000, () => {
+            let endingTextCont = this.add.text(100,800, "Oh yeah, the missing employee guy was there too. Honestly, he seemed pretty happy. He was holding a couple of them.")
+                .setWordWrapWidth(1800)
+                .setFontSize(30);
+        })
+        this.time.delayedCall(40000, () => {
+            let restart = this.add.text(100,900, "Click anywhere to restart.").setFontSize(30)
+            .setAlpha(0);
+            this.add.tween({
+                targets: restart,
+                alpha: {from: 0, to: 1},
+                duration: 1000
+            });
+            this.input.on('pointerdown', () => this.scene.start('intro'));
+        })
     }
 }
 
 class BadEnd extends Phaser.Scene {
     constructor() {
-        super('bad');
+        super('badend');
     }
 
+    typewriteTextWrapped(text)
+        {
+            const lines = this.label.getWrappedText(text)
+            const wrappedText = lines.join('\n')
+    
+            this.typewriteText(wrappedText)
+        }
+
+    typewriteText(text)
+        {
+            const length = text.length
+            let i = 0
+            this.time.addEvent({
+                callback: () => {
+                    this.label.text += text[i]
+                    ++i
+                },
+                repeat: length - 1,
+                delay: 50
+            })
+        }
+
+    create() {
+        this.label = this.add.text(100, 100, '')
+            .setFontSize(100)
+            .setWordWrapWidth(1900);
+
+        this.typewriteTextWrapped('BAD ENDING');
+
+        this.time.delayedCall(2000, () => {
+            let info = this.add.text(100,300, "Click anywhere to restart.").setFontSize(30)
+            .setAlpha(0);
+            this.add.tween({
+                targets: info,
+                alpha: {from: 0, to: 1},
+                duration: 1000
+            });
+        })
+
+        this.input.on('pointerdown', () => {
+            this.cameras.main.fade(1000, 0,0,0);
+            this.time.delayedCall(1000, () => this.scene.start('main'));
+        });
+    }
 }
 
 
@@ -598,7 +715,7 @@ const game = new Phaser.Game({
         width: 1920,
         height: 1080
     },
-    scene: [Intro, MainRoom, Freshwater, Puzzle, DeepSea, Penguin, Outro],
+    scene: [Intro, MainRoom, Freshwater, Puzzle, DeepSea, Penguin, BadEnd, Outro],
     title: "Adventure Game",
 });
 
