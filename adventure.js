@@ -34,6 +34,10 @@ class AdventureScene extends Phaser.Scene {
             .setText("Inventory")
             .setAlpha(0);
 
+        this.narration = this.add.text(this.w * 0.1 + this.s, this.h * 0.8 + this.s)
+            .setStyle({ fontSize: `${2 * this.s}px`, color: '#ffffff' })
+            .setWordWrapWidth(this.w - 2);
+
         this.inventoryTexts = [];
         this.updateInventory();
 
@@ -57,7 +61,17 @@ class AdventureScene extends Phaser.Scene {
         this.messageBox.setText(message);
         this.tweens.add({
             targets: this.messageBox,
-            //alpha: { from: 1, to: 0 },
+            alpha: { from: 1, to: 0 },
+            easing: 'Quintic.in',
+            duration: 4 * this.transitionDuration
+        });
+    }
+
+    // new method
+    showNarration(message) {
+        this.narration.setText(message);
+        this.tweens.add({
+            targets: this.narration,
             easing: 'Quintic.in',
             duration: 4 * this.transitionDuration
         });
