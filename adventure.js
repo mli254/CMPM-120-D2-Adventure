@@ -176,6 +176,18 @@ class AdventureScene extends Phaser.Scene {
         sparkle.anims.play('sparkle', true);
     }
 
+    // added method 3
+    createPuzzleBox(x, y, width, height, text) {
+        name = this.add.container(x, y);
+        name.add(this.add.rectangle(0, 0, width, height, 0xffffff));
+        let boxText = this.add.text(0, 0)
+            .setOrigin(0.5, 0.5)
+            .setText(text)
+            .setStyle({ fontSize: `${this.s}px`, fontFamily: '"Press Start 2P"', color: '#000000' })
+            .setWordWrapWidth(width-2);
+        textBox.add(boxText);
+    }
+
     onEnter() {
         console.warn('This AdventureScene did not implement onEnter():', this.constructor.name);
     }

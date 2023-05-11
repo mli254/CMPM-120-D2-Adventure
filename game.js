@@ -45,7 +45,9 @@ class MainRoom extends AdventureScene {
             })
             .on('pointerdown', () => {
                 if (this.hasItem("key")) {
+                    this.loseItem('key');
                     this.showMessage("The key fits in the lock.");
+                    this.gotoScene('penguin');
                 } else {
                     this.showMessage("It's locked. Maybe I need a key?");
                     this.tweens.add({
@@ -129,11 +131,21 @@ class Freshwater extends AdventureScene {
 
         let employee_board = this.add.image(1263*.75, 378*.75, 'employee_board').setOrigin(0,0)
             .setInteractive()
-            .on('pointerover', () => this.showMessage("A board is hanging from the wall."))
+            .on('pointerover', () => {
+                if (this.hasItem("key")) {
+                    this.showMessage("I already have the key. No need to check here again.");
+                } else {
+                    this.showMessage("A board is hanging from the wall.");
+                }
+            })
             .on('pointerdown', () => {
-                this.showMessage("Taking a closer look--");
-                this.gotoScene('puzzle');
-            });
+                if (this.hasItem("key")) {
+                    this.showMessage("I don't need to look at that anymore. I have the key.");
+                } else {
+                    this.showMessage("Taking a closer look--");
+                    this.gotoScene('puzzle');
+                }
+            })
         employee_board.setScale(0.75);
 
         let player = this.add.image(500, 500, 'player').setOrigin(0,0);
@@ -155,8 +167,13 @@ class Puzzle extends AdventureScene {
             .on('pointerover', () => this.showMessage("There's a key behind some glass."))
             .on('pointerdown', () => {
                 this.showMessage("It says I should enter a time:");
-                this.options = this.add.container(400,230);
-                let option1 = this.add.rectangle(0, 0, 200, 100, 0xffffff)
+
+                // puzzle boxes:
+                let options = this.add.container(520, 200);
+                
+                // option 1:
+                let option1 = this.add.container(0, 0);
+                let boxButton1 = this.add.rectangle(0, 0, 300, 100, 0xffffff)
                     .setInteractive()
                     .on('pointerdown', () => {
                         tries -= 1;
@@ -174,11 +191,116 @@ class Puzzle extends AdventureScene {
                         }
                         this.showMessage("\"Bzzt! Incorrect!\"");
                     });
-                this.options.add(option1);
+                option1.add(boxButton1);
+                let boxText1 = this.add.text(0, 0)
+                    .setOrigin(0.5, 0.5)
+                    .setText("25:00")
+                    .setStyle({ fontSize: `${this.s}px`, fontFamily: '"Press Start 2P"', color: '#000000' })
+                    .setWordWrapWidth(300-2);
+                option1.add(boxText1);
+                options.add(option1);
+
+                // option 2:
+                let option2 = this.add.container(350, 0);
+                let boxButton2 = this.add.rectangle(0, 0, 300, 100, 0xffffff)
+                    .setInteractive()
+                    .on('pointerdown', () => {
+                        tries -= 1;
+                        if (tries==0) {
+                            this.tweens.add({
+                                targets: initial,
+                                x: '+=' + this.s,
+                                repeat: 2,
+                                yoyo: true,
+                                ease: 'Sine.inOut',
+                                duration: 100
+                            });
+                            this.cameras.main.fade(this.transitionDuration, 255, 0, 0);
+                            this.gotoScene("outro");
+                        }
+                        this.showMessage("\"Bzzt! Incorrect!\"");
+                    });
+                option2.add(boxButton2);
+                let boxText2 = this.add.text(0, 0)
+                    .setOrigin(0.5, 0.5)
+                    .setText("25:00")
+                    .setStyle({ fontSize: `${this.s}px`, fontFamily: '"Press Start 2P"', color: '#000000' })
+                    .setWordWrapWidth(300-2);
+                option2.add(boxText2);
+                options.add(option2);
+
+                // option 3:
+                let option3 = this.add.container(0, 200);
+                let boxButton3 = this.add.rectangle(0, 0, 300, 100, 0xffffff)
+                    .setInteractive()
+                    .on('pointerdown', () => {
+                        tries -= 1;
+                        if (tries==0) {
+                            this.tweens.add({
+                                targets: initial,
+                                x: '+=' + this.s,
+                                repeat: 2,
+                                yoyo: true,
+                                ease: 'Sine.inOut',
+                                duration: 100
+                            });
+                            this.cameras.main.fade(this.transitionDuration, 255, 0, 0);
+                            this.gotoScene("outro");
+                        }
+                        this.showMessage("\"Bzzt! Incorrect!\"");
+                    });
+                option3.add(boxButton3);
+                let boxText3 = this.add.text(0, 0)
+                    .setOrigin(0.5, 0.5)
+                    .setText("25:00")
+                    .setStyle({ fontSize: `${this.s}px`, fontFamily: '"Press Start 2P"', color: '#000000' })
+                    .setWordWrapWidth(300-2);
+                option3.add(boxText3);
+                options.add(option3);
+
+                // option 4: (only visible if flyer has been checked)
+                if (this.hasItem('feeding notice')) {
+                    this.showMessage("I should have the answer now.");
+                    let option4 = this.add.container(350, 200);
+                    let boxButton4 = this.add.rectangle(0, 0, 300, 100, 0xffffff)
+                        .setInteractive()
+                        .on('pointerdown', () => {
+                            this.showMessage("It opened!");
+                            let solved = this.add.image(0, 0, 'solved').setOrigin(0,0);
+                            solved.setScale(0.75);
+
+                            let key = this.add.image(890*0.75, 844*0.75, 'key')
+                                .setInteractive()
+                                .on('pointerover', () => {
+                                    this.showMessage("This should be the key to the locked room.")
+                                })
+                                .on('pointerdown', () => {
+                                    this.showMessage("You pick up the key.");
+                                    this.gainItem('key');
+                                    this.tweens.add({
+                                        targets: key,
+                                        y: `-=${2 * this.s}`,
+                                        alpha: { from: 1, to: 0 },
+                                        duration: 500,
+                                        onComplete: () => key.destroy()
+                                    })
+                                });
+                            key.setScale(0.75)
+                        });
+                    option4.add(boxButton4);
+                    let boxText4 = this.add.text(0, 0)
+                        .setOrigin(0.5, 0.5)
+                        .setText("25:00")
+                        .setStyle({ fontSize: `${this.s}px`, fontFamily: '"Press Start 2P"', color: '#000000' })
+                        .setWordWrapWidth(300-2);
+                    option4.add(boxText4);
+                    options.add(option4);
+                }
+                
             });
         initial.setScale(0.75);
 
-        let back = this.add.text(this.w * 0.7, this.h * 0.7, "Step Back")
+        let back = this.add.text(this.w * 0.6, this.h * 0.8, "Step Back")
             .setFontSize(this.s * 2)
             .setInteractive()
             .on('pointerover', () => this.showMessage("Step back from board?"))
@@ -186,25 +308,6 @@ class Puzzle extends AdventureScene {
                 this.showMessage("Let's move back.");
                 this.gotoScene('freshwater');
             });
-        
-        // let key = this.add.image(this.w * 0.5, this.w * 0.1, "🔑 key")
-        // .setFontSize(this.s * 2)
-        // .setInteractive()
-        // .on('pointerover', () => {
-        //     this.showMessage("It's a nice key.")
-        // })
-        // .on('pointerdown', () => {
-        //     this.showMessage("You pick up the key.");
-        //     this.gainItem('key');
-        //     this.tweens.add({
-        //         targets: key,
-        //         y: `-=${2 * this.s}`,
-        //         alpha: { from: 1, to: 0 },
-        //         duration: 500,
-        //         onComplete: () => key.destroy()
-        //     })
-        // });
-
     }
 }
 
@@ -248,7 +351,18 @@ class DeepSea extends AdventureScene {
             .on('pointerover', () => this.showMessage("There's another piece of paper further in the room."))
             .on('pointerdown', () => {
                 this.showFlyer("Employee Notice:", "Attention employees! There has been some confusion regarding the feeding times of certain animals. As a result, allow this to be your official guide.");
-                });
+                this.showMessage("You pick up the notice.");
+                this.gainItem('feeding notice');
+                this.tweens.add({
+                    targets: feeding_times,
+                    y: `-=${2 * this.s}`,
+                    alpha: { from: 1, to: 0 },
+                    duration: 500,
+                    onComplete: () => feeding_times.destroy()
+            })    
+            });
+
+                
         feeding_times.setScale(0.4);
     }
 }
@@ -265,6 +379,32 @@ class Penguin extends AdventureScene {
     onEnter() {
         let penguin_bg = this.add.image(0, 0, 'penguin_bg').setOrigin(0,0);
         penguin_bg.setScale(0.75);
+
+        let return_main2 = this.add.image(96*0.75, 172.8*0.75, 'return_main2').setOrigin(0,0)
+            .setInteractive()
+            .on('pointerover', () => this.showMessage("Goes back to the room with the big tanks."))
+            .on('pointerdown', () => {
+                this.showMessage("Moving back to previous room.");
+                this.gotoScene('main');
+            });
+        return_main2.setScale(0.75);
+
+        let knife = this.add.image(500, 500, 'knife').setOrigin(0,0)
+            .setInteractive()
+            .on('pointerover', () => this.showMessage("A knife!"))
+            .on('pointerdown', () => {
+                this.showMessage("The handle is slimy with something... it's too slippery to hold.");
+                this.tweens.add({
+                    targets: knife,
+                    x: '+=' + this.s,
+                    repeat: 2,
+                    yoyo: true,
+                    ease: 'Sine.inOut',
+                    duration: 100
+                });
+            });
+        knife.setScale(0.4)
+        
     }
 }
 
