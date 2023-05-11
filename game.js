@@ -4,6 +4,7 @@ class MainRoom extends AdventureScene {
     }
 
     preload() {
+        // freshwater exhibit assets
         this.load.image('freshwater_bg', './assets/freshwater_exhibit/freshwater_bg.png');
         this.load.image('freshwater_tanks', './assets/freshwater_exhibit/freshwater_tanks.png');
         this.load.image('return_main1', './assets/freshwater_exhibit/return_door.png');
@@ -18,9 +19,9 @@ class MainRoom extends AdventureScene {
 
         let main_tanks = this.add.image(0, 0, 'main_tanks').setOrigin(0,0)
             .setInteractive()
-            .on('pointerover', () => this.showMessage("?"))
+            .on('pointerover', () => this.showMessage("This side of the room is lined with ceiling-to-floor tanks."))
             .on('pointerdown', () => {
-                this.showMessage("If this is an aquarium, why are the tanks empty?");
+                this.showMessage("The tanks are completely empty. It feels like there should've been fish in them.");
             });
         main_tanks.setScale(0.75);
 
@@ -63,64 +64,18 @@ class MainRoom extends AdventureScene {
             .setInteractive()
             .on('pointerover', () => this.showMessage("A piece of paper lays on the ground."))
             .on('pointerdown', () => {
-                this.showFlyer();
+                this.showMessage("What is this?");
+                this.showFlyer("Aquarium", "Welcome! Hours.");
                 });
         aquarium_hours.setScale(0.4);
 
-        let player = this.add.image(500, 500, 'player').setOrigin(0,0);
-
-        // let clip = this.add.text(this.w * 0.3, this.w * 0.3, "📎 paperclip")
-        //     .setFontSize(this.s * 2)
-        //     .setInteractive()
-        //     .on('pointerover', () => this.showMessage("Metal, bent."))
-        //     .on('pointerdown', () => {
-        //         this.showMessage("No touching!");
-        //         this.tweens.add({
-        //             targets: clip,
-        //             x: '+=' + this.s,
-        //             repeat: 2,
-        //             yoyo: true,
-        //             ease: 'Sine.inOut',
-        //             duration: 100
-        //         });
-        //     });
-
-        // let key = this.add.text(this.w * 0.5, this.w * 0.1, "🔑 key")
-        //     .setFontSize(this.s * 2)
-        //     .setInteractive()
-        //     .on('pointerover', () => {
-        //         this.showMessage("It's a nice key.")
-        //     })
-        //     .on('pointerdown', () => {
-        //         this.showMessage("You pick up the key.");
-        //         this.gainItem('key');
-        //         this.tweens.add({
-        //             targets: key,
-        //             y: `-=${2 * this.s}`,
-        //             alpha: { from: 1, to: 0 },
-        //             duration: 500,
-        //             onComplete: () => key.destroy()
-        //         });
-        //     })
-
-        // let door = this.add.text(this.w * 0.1, this.w * 0.15, "🚪 locked door")
-        //     .setFontSize(this.s * 2)
-        //     .setInteractive()
-        //     .on('pointerover', () => {
-        //         if (this.hasItem("key")) {
-        //             this.showMessage("You've got the key for this door.");
-        //         } else {
-        //             this.showMessage("It's locked. Can you find a key?");
-        //         }
-        //     })
-        //     .on('pointerdown', () => {
-        //         if (this.hasItem("key")) {
-        //             this.loseItem("key");
-        //             this.showMessage("*squeak*");
-        //             door.setText("🚪 unlocked door");
-        //             this.gotoScene('demo2');
-        //         }
-        //     })
+        let player = this.add.image(500, 500, 'player').setOrigin(0,0)
+            .setInteractive()
+            .on('pointerover', () => this.showMessage("I'm standing in the room."))
+            .on('pointerdown', () => {
+                this.showMessage("It's me. I don't know how I got here.");
+            });
+        this.sparkle(300, 300);
 
     }
 }
@@ -183,29 +138,7 @@ class Freshwater extends AdventureScene {
 
         let player = this.add.image(500, 500, 'player').setOrigin(0,0);
 
-        this.add.text(this.w * 0.3, this.w * 0.4, "just go back")
-            .setFontSize(this.s * 2)
-            .setInteractive()
-            .on('pointerover', () => {
-                this.showMessage("You've got no other choice, really.");
-            })
-            .on('pointerdown', () => {
-                this.gotoScene('main');
-            });
-
-        let finish = this.add.text(this.w * 0.6, this.w * 0.2, '(finish the game)')
-            .setInteractive()
-            .on('pointerover', () => {
-                this.showMessage('*giggles*');
-                this.tweens.add({
-                    targets: finish,
-                    x: this.s + (this.h - 2 * this.s) * Math.random(),
-                    y: this.s + (this.h - 2 * this.s) * Math.random(),
-                    ease: 'Sine.inOut',
-                    duration: 500
-                });
-            })
-            .on('pointerdown', () => this.gotoScene('outro'));
+        this.sparkle(300, 300);
     }
 }
 
@@ -215,8 +148,63 @@ class Puzzle extends AdventureScene {
     }
 
     onEnter() {
-        let initial = this.add.image(0, 0, 'initial').setOrigin(0,0);
+        let tries = 3;
+
+        let initial = this.add.image(0, 0, 'initial').setOrigin(0,0)
+            .setInteractive()
+            .on('pointerover', () => this.showMessage("There's a key behind some glass."))
+            .on('pointerdown', () => {
+                this.showMessage("It says I should enter a time:");
+                this.options = this.add.container(400,230);
+                let option1 = this.add.rectangle(0, 0, 200, 100, 0xffffff)
+                    .setInteractive()
+                    .on('pointerdown', () => {
+                        tries -= 1;
+                        if (tries==0) {
+                            this.tweens.add({
+                                targets: initial,
+                                x: '+=' + this.s,
+                                repeat: 2,
+                                yoyo: true,
+                                ease: 'Sine.inOut',
+                                duration: 100
+                            });
+                            this.cameras.main.fade(this.transitionDuration, 255, 0, 0);
+                            this.gotoScene("outro");
+                        }
+                        this.showMessage("\"Bzzt! Incorrect!\"");
+                    });
+                this.options.add(option1);
+            });
         initial.setScale(0.75);
+
+        let back = this.add.text(this.w * 0.7, this.h * 0.7, "Step Back")
+            .setFontSize(this.s * 2)
+            .setInteractive()
+            .on('pointerover', () => this.showMessage("Step back from board?"))
+            .on('pointerdown', () => {
+                this.showMessage("Let's move back.");
+                this.gotoScene('freshwater');
+            });
+        
+        // let key = this.add.image(this.w * 0.5, this.w * 0.1, "🔑 key")
+        // .setFontSize(this.s * 2)
+        // .setInteractive()
+        // .on('pointerover', () => {
+        //     this.showMessage("It's a nice key.")
+        // })
+        // .on('pointerdown', () => {
+        //     this.showMessage("You pick up the key.");
+        //     this.gainItem('key');
+        //     this.tweens.add({
+        //         targets: key,
+        //         y: `-=${2 * this.s}`,
+        //         alpha: { from: 1, to: 0 },
+        //         duration: 500,
+        //         onComplete: () => key.destroy()
+        //     })
+        // });
+
     }
 }
 
@@ -238,7 +226,7 @@ class DeepSea extends AdventureScene {
         let deepsea_bg = this.add.image(0, 0, 'deepsea_bg').setOrigin(0,0);
         deepsea_bg.setScale(0.75);
 
-        let return_freshwater = this.add.image(1515, 439, 'return_freshwater').setOrigin(0,0)
+        let return_freshwater = this.add.image(1515*.75, 439*.75, 'return_freshwater').setOrigin(0,0)
             .setInteractive()
             .on('pointerover', () => this.showMessage("Goes back to the freshwater exhibit."))
             .on('pointerdown', () => {
@@ -251,17 +239,17 @@ class DeepSea extends AdventureScene {
             .setInteractive()
             .on('pointerover', () => this.showMessage("A piece of paper lies near your feet."))
             .on('pointerdown', () => {
-                this.showFlyer();
+                this.showFlyer("Aquarium Closure", "The aquarium has been closed.");
                 });
-        aquarium_closure.setScale(0.75);
+        aquarium_closure.setScale(0.4);
 
         let feeding_times = this.add.image(88*0.75, 845*0.75, 'feeding_times').setOrigin(0,0)
             .setInteractive()
             .on('pointerover', () => this.showMessage("There's another piece of paper further in the room."))
             .on('pointerdown', () => {
-                this.showFlyer();
+                this.showFlyer("Employee Notice:", "Attention employees! There has been some confusion regarding the feeding times of certain animals. As a result, allow this to be your official guide.");
                 });
-        feeding_times.setScale(0.75);
+        feeding_times.setScale(0.4);
     }
 }
 
@@ -289,8 +277,7 @@ class Intro extends Phaser.Scene {
         // global assets
         this.load.image('flyer_big', './assets/global/flyer.png');
         this.load.image('player', './assets/global/player.png');
-        this.load.image('sparkle1', './assets/global/sparkle1.png');
-        this.load.image('sparkle2', './assets/global/sparkle2.png');
+        this.load.spritesheet('sparkle', './assets/global/sparkle.png', { frameWidth: 87, frameHeight: 97 });
 
         // main room assets
         this.load.image('main_bg', './assets/main_exhibit/aquarium_bg.png');

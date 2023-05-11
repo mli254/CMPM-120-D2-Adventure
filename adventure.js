@@ -26,7 +26,7 @@ class AdventureScene extends Phaser.Scene {
             .setWordWrapWidth(this.w * 0.25 - 2 * this.s);
         
         this.messageBox = this.add.text(this.w * 0.75 + this.s, this.h * 0.33)
-            .setStyle({ fontSize: `${2 * this.s}px`, color: '#eea' })
+            .setStyle({ fontSize: `${2 * this.s}px`, color: '#ffffff' })
             .setWordWrapWidth(this.w * 0.25 - 2 * this.s);
 
         this.inventoryBanner = this.add.text(this.w * 0.75 + this.s, this.h * 0.66)
@@ -57,7 +57,7 @@ class AdventureScene extends Phaser.Scene {
         this.messageBox.setText(message);
         this.tweens.add({
             targets: this.messageBox,
-            alpha: { from: 1, to: 0 },
+            //alpha: { from: 1, to: 0 },
             easing: 'Quintic.in',
             duration: 4 * this.transitionDuration
         });
@@ -144,13 +144,36 @@ class AdventureScene extends Phaser.Scene {
         });
     }
 
-    showFlyer() {
-        this.showMessage("What is this?");
+    // added method 1
+    showFlyer(title, body) {
         let flyer = this.add.image(100, 100, 'flyer_big').setOrigin(0,0);
         flyer.setInteractive();
+        let main_title = this.add.text(200, 150).setOrigin(0,0)
+            .setText(title)
+            .setStyle({ fontSize: `${3 * this.s}px`, fontFamily: '"Press Start 2P"', color: '#000000' })
+            .setWordWrapWidth(900);
+        let body_text = this.add.text(200, 300).setOrigin(0,0)
+            .setText(body)
+            .setStyle({ fontSize: `${this.s}px`, fontFamily: '"Press Start 2P"', color: '#000000' })
+            .setLineSpacing(this.s)
+            .setWordWrapWidth(900);
         flyer.on('pointerdown', function() {
             flyer.destroy();
+            main_title.destroy();
+            body_text.destroy();
         });
+    }
+
+    // added method 2
+    sparkle(x, y) {
+        const sparkle = this.add.sprite(x, y, 'sparkle');
+        this.anims.create({
+            key: 'sparkle',
+            frames: this.anims.generateFrameNumbers('sparkle', { start: 0, end: 1 }),
+            frameRate: 3,
+            repeat: -1
+        })
+        sparkle.anims.play('sparkle', true);
     }
 
     onEnter() {
