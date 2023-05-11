@@ -1,6 +1,6 @@
 class MainRoom extends AdventureScene {
     constructor() {
-        super("main", "An aquarium.");
+        super("main", "An aquarium?");
     }
 
     preload() {
@@ -13,6 +13,8 @@ class MainRoom extends AdventureScene {
     }
 
     onEnter() {
+
+        this.showNarration("Where am I?");
 
         let main_bg = this.add.image(0, 0, 'main_bg').setOrigin(0,0);
         main_bg.setScale(0.75);
@@ -45,7 +47,6 @@ class MainRoom extends AdventureScene {
             })
             .on('pointerdown', () => {
                 if (this.hasItem("key")) {
-                    this.loseItem('key');
                     this.showMessage("The key fits in the lock.");
                     this.gotoScene('penguin');
                 } else {
@@ -320,8 +321,7 @@ class DeepSea extends AdventureScene {
         this.load.image('knife', './assets/penguin_enclosure/knife.png');
         this.load.image('penguin_bg', './assets/penguin_enclosure/penguin_bg.png');
         this.load.image('return_main2', './assets/penguin_enclosure/return_main.png');
-        this.load.image('shadow1', './assets/penguin_enclosure/shadow1.png');
-        this.load.image('shadow2', './assets/penguin_enclosure/shadow2.png');
+        this.load.spritesheet('shadow', './assets/penguin_enclosure/shadow.png', { frameWidth: 173, frameHeight: 158 });
     }
 
     onEnter() {
@@ -405,6 +405,14 @@ class Penguin extends AdventureScene {
             });
         knife.setScale(0.4)
         
+        const shadow = this.add.sprite(1363.2, 433.4, 'shadow');
+        this.anims.create({
+            key: 'shadow',
+            frames: this.anims.generateFrameNumbers('shadow', { start: 0, end: 1 }),
+            frameRate: 3,
+            repeat: -1
+        })
+        shadow.anims.play('shadow', true);
     }
 }
 
@@ -427,9 +435,46 @@ class Intro extends Phaser.Scene {
         this.load.image('main_tanks', './assets/main_exhibit/tanks.png');
     }
 
+    typewriteTextWrapped(text)
+        {
+            const lines = this.label.getWrappedText(text)
+            const wrappedText = lines.join('\n')
+    
+            this.typewriteText(wrappedText)
+        }
+
+    typewriteText(text)
+        {
+            const length = text.length
+            let i = 0
+            this.time.addEvent({
+                callback: () => {
+                    this.label.text += text[i]
+                    ++i
+                },
+                repeat: length - 1,
+                delay: 50
+            })
+        }
+
     create() {
-        this.add.text(50,50, "Adventure awaits!").setFontSize(50);
-        this.add.text(50,100, "Click anywhere to begin.").setFontSize(20);
+        
+
+        this.label = this.add.text(100, 100, '')
+            .setFontSize(50)
+            .setWordWrapWidth(1900);
+
+        this.typewriteTextWrapped('When I woke up, I was in a place I didn\'t recognize.');
+        this.time.delayedCall(4000, () => {
+            let info = this.add.text(100,300, "Click anywhere to begin.").setFontSize(30)
+            .setAlpha(0);
+            this.add.tween({
+                targets: info,
+                alpha: {from: 0, to: 1},
+                duration: 1000
+            });
+        })
+
         this.input.on('pointerdown', () => {
             this.cameras.main.fade(1000, 0,0,0);
             this.time.delayedCall(1000, () => this.scene.start('main'));
@@ -446,6 +491,13 @@ class Outro extends Phaser.Scene {
         this.add.text(50, 100, "Click anywhere to restart.").setFontSize(20);
         this.input.on('pointerdown', () => this.scene.start('intro'));
     }
+}
+
+class BadEnd extends Phaser.Scene {
+    constructor() {
+        super('bad');
+    }
+
 }
 
 
