@@ -34,6 +34,7 @@ class AdventureScene extends Phaser.Scene {
             .setText("Inventory")
             .setAlpha(0);
 
+        // new field for the class
         this.narration = this.add.text(this.w * 0.1 + this.s, this.h * 0.8 + this.s)
             .setStyle({ fontSize: `${2 * this.s}px`, color: '#ffffff' })
             .setWordWrapWidth(this.w - 500);
@@ -67,7 +68,7 @@ class AdventureScene extends Phaser.Scene {
         });
     }
 
-    // new method
+    // modification of "showMessage()"
     showNarration(message) {
         this.narration.setText(message);
         this.tweens.add({
@@ -186,6 +187,18 @@ class AdventureScene extends Phaser.Scene {
             frameRate: 3,
             repeat: -1
         })
+    }
+
+    // added method 3
+    shake(name) {
+        this.tweens.add({
+            targets: name,
+            x: '+=' + this.s,
+            repeat: 2,
+            yoyo: true,
+            ease: 'Sine.inOut',
+            duration: 100
+        });
     }
 
     onEnter() {

@@ -57,14 +57,7 @@ class MainRoom extends AdventureScene {
                     this.gotoScene('penguin');
                 } else {
                     this.showNarration("It's locked. Maybe I need a key?");
-                    this.tweens.add({
-                        targets: penguin_door,
-                        x: '+=' + this.s,
-                        repeat: 2,
-                        yoyo: true,
-                        ease: 'Sine.inOut',
-                        duration: 100
-                    });
+                    this.shake(penguin_door);
                 }
             });
         penguin_door.setScale(0.75);
@@ -238,25 +231,11 @@ class Puzzle extends AdventureScene {
                     .on('pointerdown', () => {
                         tries -= 1;
                         if (tries==0) {
-                            this.tweens.add({
-                                targets: initial,
-                                x: '+=' + this.s,
-                                repeat: 2,
-                                yoyo: true,
-                                ease: 'Sine.inOut',
-                                duration: 100
-                            });
+                            this.shake(initial);
                             this.cameras.main.fade(this.transitionDuration, 255, 0, 0);
                             this.gotoScene('badend');
                         }
-                        this.tweens.add({
-                            targets: boxButton1,
-                            x: '+=' + this.s,
-                            repeat: 2,
-                            yoyo: true,
-                            ease: 'Sine.inOut',
-                            duration: 100
-                        });
+                        this.shake(boxButton1);
                         this.showMessage("\"Bzzt! Incorrect!\"");
                         this.showNarration("I don't think I know the answer. I should probably look elsewhere first.");
                     });
@@ -276,25 +255,11 @@ class Puzzle extends AdventureScene {
                     .on('pointerdown', () => {
                         tries -= 1;
                         if (tries==0) {
-                            this.tweens.add({
-                                targets: initial,
-                                x: '+=' + this.s,
-                                repeat: 2,
-                                yoyo: true,
-                                ease: 'Sine.inOut',
-                                duration: 100
-                            });
+                            this.shake(initial);
                             this.cameras.main.fade(this.transitionDuration, 255, 0, 0);
                             this.gotoScene('badend');
                         }
-                        this.tweens.add({
-                            targets: boxButton2,
-                            x: '+=' + this.s,
-                            repeat: 2,
-                            yoyo: true,
-                            ease: 'Sine.inOut',
-                            duration: 100
-                        });
+                        this.shake(boxButton2);
                         this.showMessage("\"Bzzt! Incorrect!\"");
                         this.showNarration("I don't think I know the answer. I should probably look elsewhere first.");
                     });
@@ -314,25 +279,11 @@ class Puzzle extends AdventureScene {
                     .on('pointerdown', () => {
                         tries -= 1;
                         if (tries==0) {
-                            this.tweens.add({
-                                targets: initial,
-                                x: '+=' + this.s,
-                                repeat: 2,
-                                yoyo: true,
-                                ease: 'Sine.inOut',
-                                duration: 100
-                            });
+                            this.shake(initial);
                             this.cameras.main.fade(this.transitionDuration, 255, 0, 0);
                             this.gotoScene('badend');
                         }
-                        this.tweens.add({
-                            targets: boxButton3,
-                            x: '+=' + this.s,
-                            repeat: 2,
-                            yoyo: true,
-                            ease: 'Sine.inOut',
-                            duration: 100
-                        });
+                        this.shake(boxButton3);
                         this.showMessage("\"Bzzt! Incorrect!\"");
                         this.showNarration("I don't think I know the answer. I should probably look elsewhere first.");
                     });
@@ -462,7 +413,7 @@ class DeepSea extends AdventureScene {
                 feeding_times.setScale(0.4);
         }       
 
-        let player = this.add.image(1300*0.75, 750*0.75, 'player').setOrigin(0,0)
+        let player = this.add.image(1500*0.75, 800*0.75, 'player').setOrigin(0,0)
             .setInteractive()
             .on('pointerover', () => this.showMessage("It's me."))
             .on('pointerdown', () => {
@@ -479,6 +430,9 @@ class DeepSea extends AdventureScene {
         if (this.hasItem('feeding notice')) {
             sparkle2.destroy();
         }
+        // player sparkle
+        const sparkle3 = this.add.sprite(1500*0.75, 800*0.75, 'sparkle');
+        sparkle3.anims.play('sparkle', true);
     }
 }
 
@@ -509,14 +463,7 @@ class Penguin extends AdventureScene {
             .on('pointerover', () => this.showMessage("A knife!"))
             .on('pointerdown', () => {
                 this.showNarration("The handle is slimy with something... it's too slippery to hold.");
-                this.tweens.add({
-                    targets: knife,
-                    x: '+=' + this.s,
-                    repeat: 2,
-                    yoyo: true,
-                    ease: 'Sine.inOut',
-                    duration: 100
-                });
+                this.shake(knife);
             });
         knife.setScale(0.4)
         
@@ -535,7 +482,22 @@ class Penguin extends AdventureScene {
             this.gotoScene('outro');
 
         });
-    }
+
+        let player = this.add.image(126*0.75, 272.8*0.75, 'player').setOrigin(0,0)
+            .setInteractive()
+            .on('pointerover', () => this.showMessage("It's me."))
+            .on('pointerdown', () => {
+                this.showNarration("I have a bad feeling about this room.");
+            });
+            
+        this.sparkleCreate();
+        // player
+        const sparkle1 = this.add.sprite(126*0.75, 272.8*0.75, 'sparkle');
+        sparkle1.anims.play('sparkle', true);
+        // knife sparkle
+        const sparkle2 = this.add.sprite(500, 500, 'sparkle');
+        sparkle2.anims.play('sparkle', true);
+}
 }
 
 class Intro extends Phaser.Scene {
@@ -599,7 +561,7 @@ class Intro extends Phaser.Scene {
         })
 
         this.input.on('pointerdown', () => {
-            this.cameras.main.fade(1000, 0,0,0);
+            this.cameras.main.fade(1000, 255, 255, 255);
             this.time.delayedCall(1000, () => this.scene.start('main'));
         });
     }
