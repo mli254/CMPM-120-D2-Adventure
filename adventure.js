@@ -36,7 +36,7 @@ class AdventureScene extends Phaser.Scene {
 
         this.narration = this.add.text(this.w * 0.1 + this.s, this.h * 0.8 + this.s)
             .setStyle({ fontSize: `${2 * this.s}px`, color: '#ffffff' })
-            .setWordWrapWidth(this.w - 2);
+            .setWordWrapWidth(this.w - 500);
 
         this.inventoryTexts = [];
         this.updateInventory();
@@ -179,27 +179,13 @@ class AdventureScene extends Phaser.Scene {
     }
 
     // added method 2
-    sparkle(x, y) {
-        const sparkle = this.add.sprite(x, y, 'sparkle');
+    sparkleCreate() {
         this.anims.create({
             key: 'sparkle',
             frames: this.anims.generateFrameNumbers('sparkle', { start: 0, end: 1 }),
             frameRate: 3,
             repeat: -1
         })
-        sparkle.anims.play('sparkle', true);
-    }
-
-    // added method 3
-    createPuzzleBox(x, y, width, height, text) {
-        name = this.add.container(x, y);
-        name.add(this.add.rectangle(0, 0, width, height, 0xffffff));
-        let boxText = this.add.text(0, 0)
-            .setOrigin(0.5, 0.5)
-            .setText(text)
-            .setStyle({ fontSize: `${this.s}px`, fontFamily: '"Press Start 2P"', color: '#000000' })
-            .setWordWrapWidth(width-2);
-        textBox.add(boxText);
     }
 
     onEnter() {
