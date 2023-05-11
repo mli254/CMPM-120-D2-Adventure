@@ -35,7 +35,7 @@ class MainRoom extends AdventureScene {
 
         let freshwater_door = this.add.image(1516*0.75, 446*0.75, 'freshwater_door').setOrigin(0,0)
             .setInteractive()
-            .on('pointerover', () => this.showMessage("Is this a new room?"))
+            .on('pointerover', () => this.showMessage("Is this a new room? It looks like a different exhibit."))
             .on('pointerdown', () => {
                 this.showNarration("Moving to the next room.");
                 this.gotoScene('freshwater');
@@ -111,10 +111,12 @@ class Freshwater extends AdventureScene {
     }
 
     preload() {
+        // puzzle room assets
         this.load.image('initial', './assets/key_puzzle/key_puzzle_initial.png');
         this.load.image('solved', './assets/key_puzzle/key_puzzle_solved.png');
         this.load.image('key', './assets/key_puzzle/key.png');
 
+        // deepsea exhibit assets
         this.load.image('deepsea_bg', './assets/deepsea_exhibit/deepsea_bg.png');
         this.load.image('aquarium_closure', './assets/deepsea_exhibit/aquarium_closure.png');
         this.load.image('feeding_times', './assets/deepsea_exhibit/feeding_times.png');
@@ -202,6 +204,7 @@ class Puzzle extends AdventureScene {
     }
 
     onEnter() {
+
         let tries = 3;
 
         let initial = this.add.image(0, 0, 'initial').setOrigin(0,0)
@@ -252,7 +255,7 @@ class Puzzle extends AdventureScene {
                 option1.add(boxButton1);
                 let boxText1 = this.add.text(0, 0)
                     .setOrigin(0.5, 0.5)
-                    .setText("25:00")
+                    .setText("7:00am")
                     .setStyle({ fontSize: `${this.s}px`, fontFamily: '"Press Start 2P"', color: '#000000' })
                     .setWordWrapWidth(300-2);
                 option1.add(boxText1);
@@ -282,7 +285,7 @@ class Puzzle extends AdventureScene {
                 option2.add(boxButton2);
                 let boxText2 = this.add.text(0, 0)
                     .setOrigin(0.5, 0.5)
-                    .setText("25:00")
+                    .setText("9:00am")
                     .setStyle({ fontSize: `${this.s}px`, fontFamily: '"Press Start 2P"', color: '#000000' })
                     .setWordWrapWidth(300-2);
                 option2.add(boxText2);
@@ -312,7 +315,7 @@ class Puzzle extends AdventureScene {
                 option3.add(boxButton3);
                 let boxText3 = this.add.text(0, 0)
                     .setOrigin(0.5, 0.5)
-                    .setText("25:00")
+                    .setText("12:00pm")
                     .setStyle({ fontSize: `${this.s}px`, fontFamily: '"Press Start 2P"', color: '#000000' })
                     .setWordWrapWidth(300-2);
                 option3.add(boxText3);
@@ -350,7 +353,7 @@ class Puzzle extends AdventureScene {
                     option4.add(boxButton4);
                     let boxText4 = this.add.text(0, 0)
                         .setOrigin(0.5, 0.5)
-                        .setText("25:00")
+                        .setText("5:00pm")
                         .setStyle({ fontSize: `${this.s}px`, fontFamily: '"Press Start 2P"', color: '#000000' })
                         .setWordWrapWidth(300-2);
                     option4.add(boxText4);
@@ -391,24 +394,27 @@ class DeepSea extends AdventureScene {
 
     onEnter() {
 
+        this.showNarration("This room is really dark... I think there are tanks along the wall, but I can't make out what's inside them.");
+
         let deepsea_bg = this.add.image(0, 0, 'deepsea_bg').setOrigin(0,0);
         deepsea_bg.setScale(0.75);
 
         let return_freshwater = this.add.image(1515*.75, 439*.75, 'return_freshwater').setOrigin(0,0)
             .setInteractive()
-            .on('pointerover', () => this.showMessage("Goes back to the freshwater exhibit."))
+            .on('pointerover', () => this.showMessage("This door goes back to the freshwater exhibit."))
             .on('pointerdown', () => {
-                this.showMessage("Moving to previous room.");
+                this.showNarration("Moving back...");
                 this.gotoScene('freshwater');
             });
         return_freshwater.setScale(0.75);
 
         let aquarium_closure = this.add.image(1220*0.75, 773*0.75, 'aquarium_closure').setOrigin(0,0)
             .setInteractive()
-            .on('pointerover', () => this.showMessage("A piece of paper lies near your feet."))
+            .on('pointerover', () => this.showMessage("There's a piece of paper on the ground close to where I'm standing."))
             .on('pointerdown', () => {
-                this.showFlyer("Aquarium Closure", "The aquarium has been closed.");
+                this.showFlyer("Aquarium Closure", "We regret to inform our loyal visitors that, as of ##/##/##, the aquarium will be permanently closed. There have been various reports, by both visitors and staff, of strange noises in the hallways, as well as unexplainable stains on the floors.\n The recent disappearance of one of our employees forced our hands. As the aquarium currently presents a clear danger to those that visit it, we had no other choice but to cease operations. We apologize greatly for this news.");
                 });
+                this.showNarration("A disappearance? The name written here isn't mine, but...");
         aquarium_closure.setScale(0.4);
 
         if (this.hasItem('feeding notice')) {
@@ -417,8 +423,8 @@ class DeepSea extends AdventureScene {
                 .setInteractive()
                 .on('pointerover', () => this.showMessage("There's another piece of paper further in the room."))
                 .on('pointerdown', () => {
-                    this.showFlyer("Employee Notice:", "Attention employees! There has been some confusion regarding the feeding times of certain animals. As a result, allow this to be your official guide.");
-                    this.showMessage("You pick up the notice.");
+                    this.showFlyer("Employee Notice:", "Attention employees! There has been some confusion regarding the feeding times of certain animals. As a result, allow this to be your official guide:\n\nSea Lions: 7:00am\nArapaima: 9:00am\nSeabirds: 12:00pm\nPenguins: 5:00pm");
+                    this.showNarration("This might be helpful.");
                     this.gainItem('feeding notice');
                     this.tweens.add({
                         targets: feeding_times,
@@ -433,9 +439,9 @@ class DeepSea extends AdventureScene {
 
         let player = this.add.image(1300*0.75, 750*0.75, 'player').setOrigin(0,0)
             .setInteractive()
-            .on('pointerover', () => this.showMessage("I'm standing in the room."))
+            .on('pointerover', () => this.showMessage("It's me."))
             .on('pointerdown', () => {
-                this.showMessage("It's me. I don't know how I got here.");
+                this.showNarration("I can barely see my hands when I hold them out in front of me. What's this room supposed to be?");
             });
 
         this.sparkleCreate();
