@@ -6,7 +6,7 @@ class MainRoom extends AdventureScene {
     preload() {
         this.load.image('freshwater_bg', './assets/freshwater_exhibit/freshwater_bg.png');
         this.load.image('freshwater_tanks', './assets/freshwater_exhibit/freshwater_tanks.png');
-        this.load.image('return_freshwater', './assets/freshwater_exhibit/return_door.png');
+        this.load.image('return_main1', './assets/freshwater_exhibit/return_door.png');
         this.load.image('deepsea_door', './assets/freshwater_exhibit/deepsea_door.png');
         this.load.image('employee_board', './assets/freshwater_exhibit/employee_board.png');
     }
@@ -163,14 +163,14 @@ class Freshwater extends AdventureScene {
             });
         deepsea_door.setScale(0.75);
 
-        let return_freshwater = this.add.image(1296, 334.5, 'return_freshwater').setOrigin(0,0)
+        let return_main1 = this.add.image(1296, 334.5, 'return_main1').setOrigin(0,0)
             .setInteractive()
             .on('pointerover', () => this.showMessage("Goes back to the room with the big tanks."))
             .on('pointerdown', () => {
                 this.showMessage("Moving back to previous room.");
                 this.gotoScene('main');
             });
-        return_freshwater.setScale(0.75);
+        return_main1.setScale(0.75);
 
         let employee_board = this.add.image(1263*.75, 378*.75, 'employee_board').setOrigin(0,0)
             .setInteractive()
@@ -213,6 +213,11 @@ class Puzzle extends AdventureScene {
     constructor() {
         super("puzzle", "A puzzle?");
     }
+
+    onEnter() {
+        let initial = this.add.image(0, 0, 'initial').setOrigin(0,0);
+        initial.setScale(0.75);
+    }
 }
 
 class DeepSea extends AdventureScene {
@@ -220,18 +225,58 @@ class DeepSea extends AdventureScene {
         super("deepsea", "A very dark room.");
     }
 
+    preload() {
+        this.load.image('knife', './assets/penguin_enclosure/knife.png');
+        this.load.image('penguin_bg', './assets/penguin_enclosure/penguin_bg.png');
+        this.load.image('return_main2', './assets/penguin_enclosure/return_main.png');
+        this.load.image('shadow1', './assets/penguin_enclosure/shadow1.png');
+        this.load.image('shadow2', './assets/penguin_enclosure/shadow2.png');
+    }
+
     onEnter() {
 
         let deepsea_bg = this.add.image(0, 0, 'deepsea_bg').setOrigin(0,0);
         deepsea_bg.setScale(0.75);
 
+        let return_freshwater = this.add.image(1515, 439, 'return_freshwater').setOrigin(0,0)
+            .setInteractive()
+            .on('pointerover', () => this.showMessage("Goes back to the freshwater exhibit."))
+            .on('pointerdown', () => {
+                this.showMessage("Moving to previous room.");
+                this.gotoScene('freshwater');
+            });
+        return_freshwater.setScale(0.75);
 
+        let aquarium_closure = this.add.image(1220*0.75, 773*0.75, 'aquarium_closure').setOrigin(0,0)
+            .setInteractive()
+            .on('pointerover', () => this.showMessage("A piece of paper lies near your feet."))
+            .on('pointerdown', () => {
+                this.showFlyer();
+                });
+        aquarium_closure.setScale(0.75);
+
+        let feeding_times = this.add.image(88*0.75, 845*0.75, 'feeding_times').setOrigin(0,0)
+            .setInteractive()
+            .on('pointerover', () => this.showMessage("There's another piece of paper further in the room."))
+            .on('pointerdown', () => {
+                this.showFlyer();
+                });
+        feeding_times.setScale(0.75);
     }
 }
 
 class Penguin extends AdventureScene {
     constructor() {
         super("penguin", "A room in shadow.");
+    }
+
+    preload() {
+        // insert the ending cutscene images here
+    }
+
+    onEnter() {
+        let penguin_bg = this.add.image(0, 0, 'penguin_bg').setOrigin(0,0);
+        penguin_bg.setScale(0.75);
     }
 }
 
@@ -241,10 +286,13 @@ class Intro extends Phaser.Scene {
     }
 
     preload() {
+        // global assets
         this.load.image('flyer_big', './assets/global/flyer.png');
         this.load.image('player', './assets/global/player.png');
         this.load.image('sparkle1', './assets/global/sparkle1.png');
         this.load.image('sparkle2', './assets/global/sparkle2.png');
+
+        // main room assets
         this.load.image('main_bg', './assets/main_exhibit/aquarium_bg.png');
         this.load.image('aquarium_hours', './assets/main_exhibit/aquarium_hours.png');
         this.load.image('freshwater_door', './assets/main_exhibit/freshwater_door.png');
@@ -281,7 +329,7 @@ const game = new Phaser.Game({
         width: 1920,
         height: 1080
     },
-    scene: [Intro, MainRoom, Freshwater, Outro],
+    scene: [Intro, MainRoom, Freshwater, Puzzle, DeepSea, Penguin, Outro],
     title: "Adventure Game",
 });
 
